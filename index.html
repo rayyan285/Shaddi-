@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bilal & Afrah - Wedding Invitation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f4ede4;
+      --accent-color: #2c3e35;
+      --gold-color: #c5a059;
+      --text-color: #4a4a4a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text-color);
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    /* Container */
+    .invitation-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #faf6f0;
+      min-height: 100vh;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    /* Cover / Door / Seal Overlay */
+    .cover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: visibility 0.5s ease 1.5s;
+    }
+
+    .open .cover-overlay {
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .door-left, .door-right {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: #3a4d39;
+      transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+      z-index: 1;
+    }
+
+    .door-left { left: 0; border-right: 1px solid var(--gold-color); }
+    .door-right { right: 0; border-left: 1px solid var(--gold-color); }
+
+    .open .door-left { transform: translateX(-100%); }
+    .open .door-right { transform: translateX(100%); }
+
+    .seal-btn {
+      position: relative;
+      z-index: 2;
+      background: #d4af37;
+      color: #333;
+      padding: 15px 25px;
+      border-radius: 30px;
+      border: 2px solid #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: opacity 0.5s ease;
+    }
+
+    .open .seal-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Main Content */
+    .content-section {
+      padding: 40px 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s ease 0.8s;
+    }
+
+    .open .content-section {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h1, h2, h3 {
+      font-weight: 400;
+      color: var(--accent-color);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .names {
+      font-size: 38px;
+      margin: 15px 0;
+      line-height: 1.2;
+    }
+
+    .details {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+    }
+
+    /* Scratch Canvas Section */
+    .scratch-container {
+      position: relative;
+      width: 250px;
+      height: 100px;
+      margin: 30px auto;
+      touch-action: none;
+    }
+
+    .scratch-reveal-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border: 1px solid var(--gold-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    canvas#scratch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    /* Countdown Timer */
+    .timer {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .timer-box {
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      min-width: 60px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .timer-num {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--accent-color);
+    }
+
+    .timer-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* Program Timeline */
+    .timeline {
+      text-align: left;
+      margin: 30px 10px;
+      border-left: 2px solid var(--gold-color);
+      padding-left: 20px;
+    }
+
+    .timeline-item {
+      margin-bottom: 25px;
+    }
+
+    .timeline-item h4 {
+      font-size: 18px;
+      color: var(--accent-color);
+    }
+
+    .timeline-item p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Form */
+    .rsvp-form input, .rsvp-form select, .rsvp-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+    }
+
+    .rsvp-form button {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="invitation-container" id="container">
+    <!-- Opening Seal and Doors -->
+    <div class="cover-overlay">
+      <div class="door-left"></div>
+      <div class="door-right"></div>
+      <button class="seal-btn" onclick="openEnvelope()">TAP TO OPEN</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+      <p class="subtitle">We're getting married</p>
+      <h1 class="names">Bilal<br>&<br>Afrah</h1>
+      
+      <p class="details">
+        SON OF MR. & MRS. SHAHZAD <br>
+        &<br>
+        DAUGHTER OF MR. & MRS. NAVEED
+      </p>
+
+      <hr style="border: none; border-top: 1px solid var(--gold-color); margin: 30px 0;">
+
+      <h3>Scratch to Reveal Date</h3>
+      <div class="scratch-container">
+        <div class="scratch-reveal-text">
+          <strong style="color: var(--accent-color);">January 8, 2027</strong>
+          <span style="font-size: 11px; color: #777;">Save The Date</span>
+        </div>
+        <canvas id="scratch" width="250" height="100"></canvas>
+      </div>
+
+      <h3 style="margin-top: 40px;">Counting Down to Forever</h3>
+      <div class="timer">
+        <div class="timer-box"><div class="timer-num" id="days">00</div><div class="timer-label">Days</div></div>
+        <div class="timer-box"><div class="timer-num" id="hours">00</div><div class="timer-label">Hours</div></div>
+        <div class="timer-box"><div class="timer-num" id="mins">00</div><div class="timer-label">Mins</div></div>
+        <div class="timer-box"><div class="timer-num" id="secs">00</div><div class="timer-label">Secs</div></div>
+      </div>
+
+      <h3 style="margin-top: 40px;">Program Timeline</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>Guest Arrival</h4>
+          <p>Jan 8, 2027 • 7:00 PM</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Wedding Ceremony</h4>
+          <p>Jan 8, 2027 • 7:30 PM</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Reception & Dinner</h4>
+          <p>Jan 8, 2027 • 8:30 PM</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 40px; margin-bottom: 15px;">RSVP</h3>
+      <form class="rsvp-form" onsubmit="event.preventDefault(); alert('Thank you for your response!');">
+        <input type="text" placeholder="Your Name" required>
+        <select required>
+          <option value="">Will you attend?</option>
+          <option value="yes">Joyfully Accept</option>
+          <option value="no">Regretfully Decline</option>
+        </select>
+        <textarea rows="3" placeholder="Write your wishes..."></textarea>
+        <button type="submit">SEND MESSAGE</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Open Envelope Action
+    function openEnvelope() {
+      document.getElementById('container').classList.add('open');
+      initScratchCard();
+    }
+
+    // Scratch Card Effect
+    function initScratchCard() {
+      const canvas = document.getElementById('scratch');
+      const ctx = canvas.getContext('2d');
+      
+      ctx.fillStyle = '#c5a059';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '14px Montserrat';
+      ctx.textAlign = 'center';
+      ctx.fillText('Scratch Here', canvas.width / 2, canvas.height / 2 + 5);
+
+      let isDrawing = false;
+
+      function scratch(e) {
+        if (!isDrawing) return;
+        if (e.type.startsWith('touch')) {
+          e.preventDefault();
+        }
+        
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      canvas.addEventListener('mousedown', () => isDrawing = true);
+      canvas.addEventListener('mouseup', () => isDrawing = false);
+      canvas.addEventListener('mousemove', scratch);
+
+      canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: false });
+      canvas.addEventListener('touchend', () => isDrawing = false);
+      canvas.addEventListener('touchmove', scratch, { passive: false });
+    }
+
+    // Countdown Timer Logic Target matching wedding date (Jan 8, 2027 19:00:00)
+    const targetDate = new Date('January 8, 2027 19:00:00').getTime();
+    
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+
+      if (diff > 0) {
+        document.getElementById('days').innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        document.getElementById('hours').innerText = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        document.getElementById('mins').innerText = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        document.getElementById('secs').innerText = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+      } else {
+        document.getElementById('days').innerText = "00";
+        document.getElementById('hours').innerText = "00";
+        document.getElementById('mins').innerText = "00";
+        document.getElementById('secs').innerText = "00";
+      }
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
